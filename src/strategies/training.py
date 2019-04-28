@@ -3,28 +3,31 @@ from  chainer import training
 import argparse
 from chainer import links as L
 from chainer.training import triggers, extensions
+from chainer.datasets import split_dataset
+from chainer.functions import mean_squared_error
 from pipeline import  Procedure
+from sklearn.model_selection import train_test_split
 
 
 class TrainProcedure(Procedure):
 
-    def __init__(self, model,):
-        self.model = model
+    def __init__(self, model):
+        self.model = model 
 
     def run(self, x):
-        return self.train_model(*x)
+        return self.train_model(x)
 
-    def train_model(self, train, test):
+    def train_model(self, datasets):
         parser = argparse.ArgumentParser(description='Chainer CIFAR example:')
         parser.add_argument('--dataset', '-d', default='cifar10',
                             help='The dataset to use: cifar10 or cifar100')
-        parser.add_argument('--batchsize', '-b', type=int, default=64,
+        parser.add_argument('--batchsize', '-b', type=int, default=10,
                             help='Number of images in each mini-batch')
         parser.add_argument('--learnrate', '-l', type=float, default=0.05,
                             help='Learning rate for SGD')
         parser.add_argument('--epoch', '-e', type=int, default=300,
                             help='Number of sweeps over the dataset to train')
-        parser.add_argument('--gpu', '-g', type=int, default=0,
+        parser.add_argument('--gpu', '-g', type=int, default=-1,
                             help='GPU ID (negative value indicates CPU)')
         parser.add_argument('--out', '-o', default='result',
                             help='Directory to output the result')
@@ -34,10 +37,11 @@ class TrainProcedure(Procedure):
                             help='Metric to watch for early stopping')
         args = parser.parse_args()
 
+
         print('GPU: {}'.format(args.gpu))
         print('# Minibatch-size: {}'.format(args.batchsize))
         print('# epoch: {}'.format(args.epoch))
-        print('')
+
 
         if args.gpu >= 0:
             chainer.backends.cuda.get_device_from_id(args.gpu).use()
@@ -46,6 +50,8 @@ class TrainProcedure(Procedure):
         optimizer = chainer.optimizers.Adam(args.learnrate)
         optimizer.setup(self.model)
         optimizer.add_hook(chainer.optimizer_hooks.WeightDecay(5e-4))
+
+        train, test = split_dataset(datasets, 80)
 
         train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
         test_iter = chainer.iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
@@ -59,7 +65,7 @@ class TrainProcedure(Procedure):
 
         # Set up a trainer
         updater = training.updaters.StandardUpdater(
-            train_iter, optimizer, device=args.gpu)
+            train_iter, optimizer, device=args.gpu, loss_func=mean_squared_error)
         trainer = training.Trainer(updater, stop_trigger, out=args.out)
 
         # Evaluate the model with the test dataset for each epoch
@@ -95,6 +101,8 @@ class TrainProcedure(Procedure):
         if args.resume:
             # Resume from a snapshot
             chainer.serializers.load_npz(args.resume, trainer)
+
+        print(train[:1])
 
         # Run the training
         trainer.run()

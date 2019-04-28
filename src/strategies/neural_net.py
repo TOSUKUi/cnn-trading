@@ -5,45 +5,46 @@ from pipeline import Procedure
 
 
 
-class ModelProcedure(chainer.Chain, Procedure):
+class ModelProcedureChainer(chainer.Chain, Procedure):
     
     def run(self, x):
         return self.__call__(x)
 
 
-class TradngModel2D(ModelProcedure):
+class TradingModel2D(ModelProcedure):
 
     def __init__(self):
         super(TradingModel2D, self).__init__()
         with self.init_scope():
-            self.conv1 = L.Convolution2D(None, 64, ksize=4, strides=4)
-            self.normalize1 = L.BatchNormalization(None)
-            self.conv2 = L.Convolution2D(64, 512, ksize=4, strides=4)
+            self.conv1 = L.Convolution2D(None, 64, ksize=4, stride=4)
+
+            # self.normalize1 = L.BatchNormalization(None)
+            self.conv2 = L.Convolution2D(64, 512, ksize=4, stride=4)
             self.conv3 = L.Convolution2D(512, 1920, 4, 4)
-            self.linear1 = L.Linear(None, 1280)
-            self.linear2 = L.Linear(1280, 1280)
-            self.linear3 = L.Linear(1280, 1)
+            self.linear1 = L.Linear(128, 128)
+            self.linear2 = L.Linear(128, 128)
+            self.linear3 = L.Linear(128, 1)
         
     def __call__(self, x):
         h1 = self.conv1(x)
-        h2 = self.normalize1(h1)
-        h3 = F.relu(h2)
+        # h2 = self.normalize1(h1)
+        h3 = F.relu(h1)
         h4 = F.max_pooling_2d(h3, 4, 2)
         h5 = F.max_pooling_2d(F.relu(self.conv2(h4)), 4, 2)
         h6 = F.max_pooling_2d(F.relu(self.conv3(h5)), 4, 2)
-        l1 = self.linear1(h6)
-        l2 = self.linear2(l1)
+        l1 = F.sigmoid(self.linear1(h6))
+        l2 = F.sigmoid(self.linear2(l1))
         return self.linear3(l2)
 
 
-class TradingModel1D(ModelProcedure):
+class TradingModel1D(chainer.Chain):
 
     def __init__(self):
         super(TradingModel1D, self).__init__()
         with self.init_scope():
             self.conv1 = L.Convolution1D(None, 64, ksize=4, stride=4)
-            self.conv2 = L.Convolution1D(64, 512, ksize=4, stride=4)
-            self.conv3 = L.Convolution1D(512, 1920, 4, 4)
+            self.conv2 = L.Convolution1D(None, 512, ksize=4, stride=4)
+            self.conv3 = L.Convolution1D(None, 1920, 4, 4)
             self.linear1 = L.Linear(None, 1280)
             self.linear2 = L.Linear(1280, 1280)
             self.linear3 = L.Linear(1280, 1)
@@ -55,17 +56,26 @@ class TradingModel1D(ModelProcedure):
         h4 = F.max_pooling_2d(h3, 4, 2)
         h5 = F.max_pooling_2d(F.relu(self.conv2(h4)), 4, 2)
         h6 = F.max_pooling_2d(F.relu(self.conv3(h5)), 4, 2)
-        l1 = self.linear1(h6)
-        l2 = self.linear2(l1)
+        l1 = F.relu(self.linear1(h6))
+        l2 = F.relu(self.linear2(l1))
         return self.linear3(l2)
 
-
-    
-
-
+    def run(self, x):
+        return self.__call__(x)
 
 
+class MLP(chainer.Chain):
 
+    def __init__(self, n_units, n_out):
+        super(MLP, self).__init__(
+            # the size of the inputs to each layer will be inferred
+            l1=L.Linear(None, n_units),  # n_in -> n_units
+            l2=L.Linear(None, n_units),  # n_units -> n_units
+            l3=L.Linear(None, n_out),  # n_units -> n_out
+        )
 
-
+    def __call__(self, x):
+        h1 = F.relu(self.l1(x))
+        h2 = F.relu(self.l2(h1))
+        return self.l3(h2)
 
