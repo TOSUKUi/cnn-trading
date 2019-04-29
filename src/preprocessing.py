@@ -80,6 +80,6 @@ class PreprocessingProcedure1D(Procedure):
             x.append(unit_normalize.resample('1min', how=how))
             x.append(unit_normalize.resample('5min', how=how))
             x.append(unit_normalize.resample('15min', how=how))
-            y.append(df_resampled["Close"].iloc[n] - unit["Close"].iloc[n+1])
+            y.append(df_resampled["Close"].iloc[n] - df_resampled["Close"].iloc[n+1])
             X.append(pd.concat(x).T.values)
         return np.array(X), np.array(y)
