@@ -1,4 +1,6 @@
 from functools import reduce
+from abc import ABCMeta, abstractmethod
+
 class PipeLine():
 
     def execute(self):
@@ -10,7 +12,9 @@ class TrainPipeLine(PipeLine):
     def __init__(self, *pipeline):
         self.pipeline = pipeline 
 
-class Procedure():
 
+class Procedure(metaclass=ABCMeta):
+
+    @abstractmethod
     def run(self, x):
         pass
