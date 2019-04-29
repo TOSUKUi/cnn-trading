@@ -67,8 +67,8 @@ class PreprocessingProcedure1D(Procedure):
         df_b_a = df_accept.bfill()
         df_resampled = df_b_a.resample('60min', how=how)
         df_resampled_1min = df_b_a
-        df_reamspled_5min = df_b_a.resample('5min', how=how)
-        df_reamspled_15min = df_b_a.resample('15min', how=how)
+        df_resampled_5min = df_b_a.resample('5min', how=how)
+        df_resampled_15min = df_b_a.resample('15min', how=how)
         X = []
         y = []
         for n in range(60, len(df_resampled) - 1):
