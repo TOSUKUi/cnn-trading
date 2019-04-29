@@ -3,6 +3,7 @@ from pipeline import Procedure
 from datetime import datetime
 import numpy as np
 from chainer.datasets import TupleDataset
+from tqdm import tqdm
 
 
 
@@ -71,7 +72,7 @@ class PreprocessingProcedure1D(Procedure):
         df_resampled_15min = df_b_a.resample('15min', how=how)
         X = []
         y = []
-        for n in range(60, len(df_resampled) - 1):
+        for n in tqdm(range(60, len(df_resampled) - 1)):
             x_base = df_resampled.iloc[n-60:n, :]
             x_base_normalize = normalize(x_base)
             min_date = x_base.index[0]
