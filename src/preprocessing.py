@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 from chainer.datasets import TupleDataset
 from tqdm import tqdm
+from numba import jit
 
 
 
@@ -59,6 +60,7 @@ class PreprocessingProcedure1D(Procedure):
         }
         return self.preprocessing(x, ohlc_dict)
 
+    @jit
     def preprocessing(self, df, how):
         dataset = []
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
