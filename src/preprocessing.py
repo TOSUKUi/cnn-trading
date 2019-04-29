@@ -68,7 +68,7 @@ class PreprocessingProcedure1D(Procedure):
         df_resampled = df_b_a.resample('60min', how=how)
         X = []
         y = []
-        for n in range(60, len(df_resampled)):
+        for n in range(60, len(df_resampled) - 1):
             x_base = df_resampled.iloc[n-60:n, :]
             x_base = x_base - x_base.head(1).iloc[0]
             min_date = x_base.index[0]
