@@ -70,16 +70,16 @@ class PreprocessingProcedure1D(Procedure):
         y = []
         for n in range(60, len(df_resampled) - 1):
             x_base = df_resampled.iloc[n-60:n, :]
-            x_base = x_base - x_base.head(1).iloc[0]
+            x_base = x_base - x_base.head(1)
             min_date = x_base.index[0]
             max_date = x_base.index[-1]
             unit = df_b_a.loc[min_date:max_date]
-            unit_normalize = unit - unit.head(1).iloc[0]
+            unit_normalize = unit - unit.head(1)
             x = []
             x.append(x_base)
-            x.append(unit_normalize.resample('1min', how=how))
-            x.append(unit_normalize.resample('5min', how=how))
-            x.append(unit_normalize.resample('15min', how=how))
+            # x.append(unit_normalize.resample('1min', how=how))
+            # x.append(unit_normalize.resample('5min', how=how))
+            # x.append(unit_normalize.resample('15min', how=how))
             y.append(df_resampled["Close"].iloc[n] - df_resampled["Close"].iloc[n+1])
             X.append(pd.concat(x).T.values)
         return np.array(X), np.array(y)
