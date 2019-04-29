@@ -117,7 +117,7 @@ class TradingModel2D(ModelProcedureChainer):
         h1 = self.conv1(x)
         # h2 = self.normalize1(h1)
         h3 = F.relu(h1)
-        h4 = F.max_pooling_2d(, 2)
+        h4 = F.max_pooling_2d(h3, 4, 2)
         h5 = F.max_pooling_2d(F.relu(self.conv2(h4)), 4, 2)
         h6 = F.max_pooling_2d(F.relu(self.conv3(h5)), 4, 2)
         l1 = F.sigmoid(self.linear1(h6))
