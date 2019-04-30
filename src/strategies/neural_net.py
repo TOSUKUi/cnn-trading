@@ -206,7 +206,7 @@ class KerasLinear1D(CNNModel):
         return super().train(X, y, self.saved_model_path, *args, **kwargs)
 
     def linear(self):
-        inputs = Input(shape=(5, 3600), name='inputs')
+        inputs = Input(shape=(5, 1800), name='inputs')
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(inputs)
         x = MaxPool1D(pool_size=3, strides=2)(x)
         x = BatchNormalization()(x)
