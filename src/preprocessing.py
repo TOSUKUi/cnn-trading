@@ -68,30 +68,14 @@ class PreprocessingProcedure1D(Procedure):
 
         df_accept = df_d.loc[datetime(2013, 8, 1):]
         df_b_a = df_accept.bfill()
-        df_resampled = df_b_a.resample('60min', how=how)
         df_resampled_1min = df_b_a
-        df_resampled_5min = df_b_a.resample('5min', how=how)
-        df_resampled_15min = df_b_a.resample('15min', how=how)
         X = []
         y = []
-        for n in tqdm(range(60, 1000):
-            x_base = df_resampled.iloc[n-60:n, :]
+        for n in tqdm(range(3600, len(df_resampled_1min)-60):
+            x_base = df_resampled_1min.iloc[n-3600:n, :]
             x_base_normalize = normalize(x_base)
-            min_date = x_base.index[0]
-            max_date = x_base.index[-1]
-            unit_1min = df_resampled_1min[min_date:max_date]
-            unit_5min = df_resampled_5min[min_date:max_date]
-            unit_15min = df_resampled_15min[min_date:max_date]
-            unit_1min_normalize = normalize(unit_1min)
-            unit_5min_normalize = normalize(unit_5min)
-            unit_15min_normalize = normalize(unit_15min)
-            x = []
-            x.append(x_base_normalize)
-            x.append(unit_1min_normalize)
-            x.append(unit_5min_normalize)
-            x.append(unit_15min_normalize)
-            y.append((df_resampled["Close"].iloc[n+1] - df_resampled["Close"].iloc[n]) / df_resampled["Close"].iloc[n])
-            X.append(pd.concat(x).T.values)
+            y.append((df_resampled["Close"].iloc[n+60] - df_resampled["Close"].iloc[n]) / df_resampled["Close"].iloc[n])
+            X.append(x_base_normalize.T.values)
         return np.array(X), np.array(y)
 
 
