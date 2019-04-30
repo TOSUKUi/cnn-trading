@@ -70,11 +70,11 @@ class PreprocessingProcedure1D(Procedure):
         df_b_a = df_accept.bfill()
         df_resampled = df_b_a.resample('60min', how=how)
         df_resampled_1min = df_b_a
-        df_resampled_5min = df_b_a.resample('5min', how=how)
+        df_resampled_5min = df_b_a.resample('5min').apply( how=how)
         df_resampled_15min = df_b_a.resample('15min', how=how)
         X = []
         y = []
-        for n in tqdm(range(60, len(df_resampled) - 1)):
+        for n in tqdm(range(60, 1000):
             x_base = df_resampled.iloc[n-60:n, :]
             x_base_normalize = normalize(x_base)
             min_date = x_base.index[0]
