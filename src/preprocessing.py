@@ -68,7 +68,7 @@ class PreprocessingProcedure1D(Procedure):
 
         df_accept = df_d.loc[datetime(2013, 8, 1):]
         df_b_a = df_accept.bfill()
-        df_resampled_1min = df_b_a
+        df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
         X = []
         y = []
         for n in tqdm(range(1800, len(df_resampled_1min) - 60, 60)):
