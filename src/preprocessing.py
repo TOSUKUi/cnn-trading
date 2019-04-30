@@ -71,8 +71,8 @@ class PreprocessingProcedure1D(Procedure):
         df_resampled_1min = df_b_a
         X = []
         y = []
-        for n in tqdm(range(3600, len(df_resampled_1min) - 60, 60)):
-            x_base = df_resampled_1min.iloc[n-3600:n, :]
+        for n in tqdm(range(1800, len(df_resampled_1min) - 60, 60)):
+            x_base = df_resampled_1min.iloc[n-1800:n, :]
             x_base_normalize = normalize(x_base)
             y.append((df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n]) / df_resampled_1min["Close"].iloc[n])
             X.append(x_base_normalize.T.values)
