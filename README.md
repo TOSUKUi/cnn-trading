@@ -30,7 +30,8 @@ def train_pipeline():
 ```
 pipeline is defined at src/pipeline.py
 
-PipeLine constructor never take argument which are not implemented Procedure without 1st argument.
+
+PipeLine constructor never take argument which are not extend Procedure except 1st argument.
 
 Each procedure are implement Procedure class.
 
