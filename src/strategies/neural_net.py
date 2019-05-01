@@ -188,6 +188,7 @@ class KerasLinear(CNNModel):
 
 
 class KerasLinear1D(CNNModel):
+
     def __init__(self, saved_model_path, model=None, num_outputs=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.saved_model_path = saved_model_path
