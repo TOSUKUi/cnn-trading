@@ -1,5 +1,6 @@
-from pipeline import Procedure
+from core.pipeline import Procedure
 import pandas as pd
+
 
 class ReadData(Procedure):
 
@@ -7,5 +8,4 @@ class ReadData(Procedure):
         return self.execute(x)
 
     def execute(self, path):
-        return  pd.read_csv(path)
-        
+        return pd.read_csv(path)
