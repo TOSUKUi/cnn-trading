@@ -1,5 +1,5 @@
 import pandas as pd
-from core.pipeline import Procedure
+from pipeline import Procedure
 from datetime import datetime
 import numpy as np
 from chainer.datasets import TupleDataset

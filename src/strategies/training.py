@@ -5,7 +5,7 @@ from chainer import links as L
 from chainer.training import triggers, extensions
 from chainer.datasets import split_dataset
 from chainer.functions import mean_squared_error
-from core.pipeline import  Procedure
+from pipeline import  Procedure
 from sklearn.model_selection import train_test_split
 
 
