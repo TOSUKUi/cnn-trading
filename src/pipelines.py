@@ -1,5 +1,5 @@
 from read_data import ReadData
-from pipeline import PipeLine, TrainPipeLine
+from pipeline import PipeLine 
 from preprocessing import PreprocessingProcedure1D
 from strategies.training import TrainProcedureChainer, TrainProcedureKeras
 from strategies.neural_net import KerasLinear1D
