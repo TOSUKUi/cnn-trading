@@ -1,8 +1,7 @@
 from pipeline import Procedure
-from typing 
 
 
-class PredicateProcedure():
+class PredicateProcedureKeras():
 
-    def run(self, x: )
+    pass
 

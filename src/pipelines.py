@@ -3,11 +3,9 @@ from pipeline import PipeLine
 from preprocessing import PreprocessingProcedure1D
 from strategies.training import TrainProcedureChainer, TrainProcedureKeras
 from strategies.neural_net import KerasLinear1D
-from strategies.predicating import PredicateProcedureKeras
+from strategies.predicate import PredicateProcedureKeras
 
 
-import sys
-sys.path.append("/Users/TOSUKUi/Documents/workspace/trading-deeplearning")
 
 
 def train_pipeline():
