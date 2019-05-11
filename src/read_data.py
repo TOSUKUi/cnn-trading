@@ -1,4 +1,4 @@
-from pipeline import Procedure
+from core.pipeline import Procedure
 import pandas as pd
 
 class ReadData(Procedure):

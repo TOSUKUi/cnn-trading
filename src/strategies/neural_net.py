@@ -1,7 +1,7 @@
 import chainer
 import chainer.functions as F
 import chainer.links as L
-from pipeline import Procedure
+from core.pipeline import Procedure
 from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, BatchNormalization
 from tensorflow.python.keras.layers import Conv1D, MaxPool1D 

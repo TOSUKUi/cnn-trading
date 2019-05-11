@@ -10,7 +10,7 @@ This is not a library but customizable easily via add the pipeline code like thi
 ```python
 src/pipelines.py
 
-from pipeline import PipeLine 
+from core.pipeline import PipeLine 
 
 def train_pipeline():
     saved_model_path = "models/saved_model.h5"

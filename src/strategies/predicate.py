@@ -1,4 +1,4 @@
-from pipeline import Procedure
+from core.pipeline import Procedure
 from typing 
 
 
