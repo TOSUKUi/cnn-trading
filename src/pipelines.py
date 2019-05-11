@@ -1,6 +1,6 @@
 from read_data import ReadData
 from pipeline import PipeLine 
-from preprocessing import PreprocessingProcedure1D
+from preprocessing import PreprocessingProcedure1D, TrainingPreprocessingProcedure1D
 from strategies.training import TrainProcedureChainer, TrainProcedureKeras
 from strategies.neural_net import KerasLinear1D
 from strategies.predicate import PredicateProcedureKeras
@@ -14,7 +14,7 @@ def train_pipeline():
     PipeLine(
         data_path,
         ReadData(),
-        PreprocessingProcedure1D(),
+        TrainingPreprocessingProcedure1D(),
         TrainProcedureKeras(
             KerasLinear1D(
                 saved_model_path=saved_model_path
