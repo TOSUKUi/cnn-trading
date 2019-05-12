@@ -209,7 +209,7 @@ class KerasLinear1D(CNNModel):
 
     def linear(self):
         inputs = Input(shape=(5, 1800), name='inputs')
-        x = Conv1D(filters=6, kernel_size=3, strides=1, activation=tf.nn.relu)(inputs)
+        x = Conv1D(filters=20, kernel_size=5, strides=1, activation=tf.nn.relu)(inputs)
         # x = MaxPool1D(pool_size=3, strides=2)(x)
         # x = BatchNormalization()(x)
         # # x = Conv1D(filters=6, kernel_size=3, strides=2, activation='relu')(x)
