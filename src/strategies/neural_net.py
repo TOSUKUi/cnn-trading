@@ -9,6 +9,7 @@ from tensorflow.python.keras.layers.advanced_activations import LeakyReLU
 from tensorflow.python.keras.models import Model, Sequential
 from tensorflow.python.keras.utils import plot_model, to_categorical
 from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
+import tensorflow as tf
 import numpy as np
 
 
@@ -208,15 +209,15 @@ class KerasLinear1D(CNNModel):
 
     def linear(self):
         inputs = Input(shape=(5, 1800), name='inputs')
-        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(inputs)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation=tf.nn.relu)(inputs)
         x = MaxPool1D(pool_size=3, strides=2)(x)
         x = BatchNormalization()(x)
         # x = Conv1D(filters=6, kernel_size=3, strides=2, activation='relu')(x)
         # x = MaxPool1D(pool_size=3, strides=2)(x)
         x = Flatten(name='flattened')(x)
-        x = Dense(units=100, activation='linear')(x)
-        x = Dense(units=100, activation='linear')(x)
-        handling = Dense(units=1, activation='linear', name='output')(x)
+        x = Dense(units=100, activation=tf.nn.relu)(x)
+        x = Dense(units=100)(x)
+        handling = Dense(units=1, name='output')(x)
         model = Model(inputs=[inputs], outputs=[handling])
         model.compile(optimizer='adam', loss={'output': 'mean_squared_error'}, loss_weights={'output': 0.05})
         return model
