@@ -65,7 +65,7 @@ class TrainingPreprocessingProcedure1D(Procedure):
         df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
         X = []
         y = []
-        for n in tqdm(range(1800, 5400 - 60, 60)):
+        for n in tqdm(range(1800, 18000 - 60, 60)):
             x_base = df_resampled_1min.iloc[n-1800:n, :]
             x_base_normalize = normalize(x_base)
             y.append((df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n]) / df_resampled_1min["Close"].iloc[n])
