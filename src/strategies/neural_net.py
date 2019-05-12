@@ -42,11 +42,11 @@ class CNNModel:
         hist = self.model.fit(
             X,
             y,
-            batch_size=batch_size,
+            #batch_size=batch_size,
             epochs=epochs,
-            verbose=1,
-            validation_split=1 - train_split,
-            callbacks=callbacks_list,
+            #verbose=1,
+            #validation_split=1 - train_split,
+            #callbacks=callbacks_list,
         )
         return hist
 
