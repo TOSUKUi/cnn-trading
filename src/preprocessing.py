@@ -61,6 +61,7 @@ class TrainingPreprocessingProcedure1D(Procedure):
         df_d = df.set_index("datetime")
 
         df_accept = df_d.loc[datetime(2013, 8, 1):]
+        
         df_b_a = df_accept.bfill()
         df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
         X = []
@@ -70,7 +71,7 @@ class TrainingPreprocessingProcedure1D(Procedure):
             x_base_normalize = normalize(x_base)
             y.append((df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n]) / df_resampled_1min["Close"].iloc[n])
             X.append(x_base_normalize.T.values)
-        return np.array(X), np.array(y)
+        return np.array(X, dtype=np.float16), np.array(y, dtype=np.float16)
 
 
 def normalize(df):
