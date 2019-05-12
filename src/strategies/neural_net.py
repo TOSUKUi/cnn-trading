@@ -14,7 +14,7 @@ import numpy as np
 
 class CNNModel:
 
-    def train(self, X, y, saved_model_path, batch_size=8, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
+    def train(self, X, y, saved_model_path, batch_size=1, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
         """
         Args:
             train: list of traininig data
