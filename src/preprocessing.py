@@ -70,7 +70,7 @@ class TrainingPreprocessingProcedure1D(Procedure):
             x_base = df_resampled_1min.iloc[n-1800:n, :]
             x_base_normalize = normalize(x_base)
             y.append((df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n]) / df_resampled_1min["Close"].iloc[n])
-            X.append(x_base_normalize.T.values)
+            X.append(x_base_normalize.values)
         return np.array(X, dtype=np.float16), np.array(y, dtype=np.float16)
 
 

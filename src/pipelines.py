@@ -18,8 +18,8 @@ def train_pipeline():
         TrainProcedureKeras(
             KerasLinear1D(
                 saved_model_path=saved_model_path,
-                use_early_stop=False
-            )
+            ),
+            use_early_stop=False
         )
     ).execute()
 

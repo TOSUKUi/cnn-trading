@@ -3,7 +3,7 @@ import chainer.functions as F
 import chainer.links as L
 from pipeline import Procedure
 from tensorflow.python.keras import Input
-from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, BatchNormalization
+from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, BatchNormalization, Dropout
 from tensorflow.python.keras.layers import Conv1D, MaxPool1D 
 from tensorflow.python.keras.layers.advanced_activations import LeakyReLU
 from tensorflow.python.keras.models import Model, Sequential
@@ -11,6 +11,7 @@ from tensorflow.python.keras.utils import plot_model, to_categorical
 from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 import numpy as np
+
 
 
 class CNNModel:
@@ -43,11 +44,11 @@ class CNNModel:
         hist = self.model.fit(
             X,
             y,
-            #batch_size=batch_size,
+            batch_size=batch_size,
             epochs=epochs,
-            #verbose=1,
-            #validation_split=1 - train_split,
-            #callbacks=callbacks_list,
+            verbose=1,
+            validation_split=1 - train_split,
+            callbacks=callbacks_list,
         )
         return hist
 
@@ -208,15 +209,17 @@ class KerasLinear1D(CNNModel):
         return super().train(X, y, self.saved_model_path, *args, **kwargs)
 
     def linear(self):
-        inputs = Input(shape=(5, 1800), name='inputs')
+        inputs = Input(shape=(1800, 5), name='inputs')
         x = Conv1D(filters=30, kernel_size=5, strides=2, activation='relu')(inputs)
-        x = MaxPool1D(pool_size=3, strides=2)(x)
+        x = MaxPool1D(pool_size=3, strides=1)(x)
         x = BatchNormalization()(x)
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
         x = MaxPool1D(pool_size=3, strides=2)(x)
+        x = Dropout(rate=0.25)(x)
         x = Flatten(name='flattened')(x)
-        # x = Dense(units=100, activation=tf.nn.relu)(x)
-        # x = Dense(units=100)(x)
+        x = Dense(units=100, activation=tf.nn.relu)(x)
+        x = Dense(units=100)(x)
         handling = Dense(units=1, name='output')(x)
         model = Model(inputs=[inputs], outputs=[handling])
         model.compile(optimizer='adam', loss={'output': 'mean_squared_error'})
