@@ -14,7 +14,7 @@ import numpy as np
 
 class CNNModel:
 
-    def train(self, X, y, saved_model_path, batch_size=8, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
+    def train(self, X, y, saved_model_path, batch_size=16, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
         """
         Args:
             train: list of traininig data
@@ -208,15 +208,15 @@ class KerasLinear1D(CNNModel):
 
     def linear(self):
         inputs = Input(shape=(5, 1800), name='inputs')
-        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(inputs)
+        x = Conv1D(filters=30, kernel_size=5, strides=2, activation='relu')(inputs)
         x = MaxPool1D(pool_size=3, strides=2)(x)
         x = BatchNormalization()(x)
-        # x = Conv1D(filters=6, kernel_size=3, strides=2, activation='relu')(x)
-        # x = MaxPool1D(pool_size=3, strides=2)(x)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
+        x = MaxPool1D(pool_size=3, strides=2)(x)
         x = Flatten(name='flattened')(x)
         x = Dense(units=100, activation='linear')(x)
         x = Dense(units=100, activation='linear')(x)
         handling = Dense(units=1, activation='linear', name='output')(x)
         model = Model(inputs=[inputs], outputs=[handling])
-        model.compile(optimizer='adam', loss={'output': 'mean_squared_error'}, loss_weights={'output': 0.05})
+        model.compile(optimizer='adam', loss={'output': 'mean_squared_error'})
         return model
