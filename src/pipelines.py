@@ -9,7 +9,7 @@ from strategies.predicate import PredicateProcedureKeras
 
 
 def train_pipeline():
-    saved_model_path = "models/saved_model.h5"
+    saved_model_path = "../models/saved_model.h5"
     data_path = '../data/bitstampUSD_1-min_data_2012-01-01_to_2019-03-13.csv',
     PipeLine(
         data_path,
