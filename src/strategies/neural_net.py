@@ -224,3 +224,40 @@ class KerasLinear1D(CNNModel):
         model = Model(inputs=[inputs], outputs=[handling])
         model.compile(optimizer='adam', loss={'output': 'mean_squared_error'})
         return model
+
+
+class KerasLinear1DSoftMax(CNNModel):
+
+    def __init__(self, saved_model_path, model=None, num_outputs=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.saved_model_path = saved_model_path
+        if model:
+            self.model = model
+        elif num_outputs is not None:
+            self.model = self.linear()
+        else:
+            self.model = self.linear()
+
+    def run(self, img_arr):
+        output = self.model.predict(img_arr)
+        return np.argmax(output[0])
+
+    def train(self, X, y, *args, **kwargs):
+        return super().train(X, y, self.saved_model_path, *args, **kwargs)
+
+    def linear(self):
+        inputs = Input(shape=(60, 5), name='inputs')
+        x = Conv1D(filters=30, kernel_size=5, strides=2, activation='relu')(inputs)
+        x = MaxPool1D(pool_size=3, strides=1)(x)
+        x = BatchNormalization()(x)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
+        x = MaxPool1D(pool_size=3, strides=2)(x)
+        x = Dropout(rate=0.25)(x)
+        x = Flatten(name='flattened')(x)
+        x = Dense(units=100, activation=tf.nn.relu)(x)
+        x = Dense(units=100)(x)
+        handling = Dense(units=1, name='output', activation='sigmoid')(x)
+        model = Model(inputs=[inputs], outputs=[handling])
+        model.compile(optimizer='adam', loss={'output': 'binary_crossentropy'}, metrics=['accuracy'])
+        return model
