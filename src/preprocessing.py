@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from chainer.datasets import TupleDataset
 from tqdm import tqdm
-from numba import jit
+from numba import njit, jit
 as_strided = np.lib.stride_tricks.as_strided  
 
 
@@ -88,11 +88,9 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
         }
         return self.preprocessing(x, ohlc_dict)
 
-    @jit
     def preprocessing(self, df, how):
         win = 60
 
-        dataset = []
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
 
@@ -100,14 +98,24 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
         
         df_b_a = df_accept.bfill()
         df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
-        X = []
-        y = []
-        for n in tqdm(range(60, len(df_resampled_1min) - 60, 60)):
-            x_base = df_resampled_1min.iloc[n-60:n, :]
-            x_base_normalize = normalize(x_base)
-            y.append(1 if df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n] > 0 else 0)
-            X.append(x_base_normalize.values)
-        return np.array(X, dtype=np.float16), np.array(y, dtype=np.float16) 
+        array = df_resampled_1min.values 
+        X, y = dataset(array)
+        return np.array(X), np.array(y)
+
+    
+@njit
+def dataset(array):
+    X = []
+    y = []
+    count = 0
+    for n in range(60, len(array) - 60, 60):
+        count += 1
+        print(count)
+        x_base = array[n-60:n, :]
+        x_base_normalize = (x_base - x_base.mean()) / x_base.std()
+        y.append(1 if array[n+60, 3] - array[n, 3] > 0 else 0)
+        X.append(x_base_normalize)
+    return X, y
 
 
 def normalize(df):
