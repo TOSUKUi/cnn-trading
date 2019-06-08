@@ -110,7 +110,6 @@ def dataset(array):
     count = 0
     for n in range(60, len(array) - 60, 60):
         count += 1
-        print(count)
         x_base = array[n-60:n, :]
         x_base_normalize = (x_base - x_base.mean()) / x_base.std()
         y.append(1 if array[n+60, 3] - array[n, 3] > 0 else 0)
