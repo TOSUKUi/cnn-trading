@@ -5,6 +5,8 @@ import numpy as np
 from chainer.datasets import TupleDataset
 from tqdm import tqdm
 from numba import jit
+as_strided = np.lib.stride_tricks.as_strided  
+
 
 
 class PreprocessingProcedure1D(Procedure):
@@ -88,6 +90,8 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
 
     @jit
     def preprocessing(self, df, how):
+        win = 60
+
         dataset = []
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
@@ -103,7 +107,7 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
             x_base_normalize = normalize(x_base)
             y.append(1 if df_resampled_1min["Close"].iloc[n+60] - df_resampled_1min["Close"].iloc[n] > 0 else 0)
             X.append(x_base_normalize.values)
-        return np.array(X, dtype=np.float16), np.array(y, dtype=np.int8) 
+        return np.array(X, dtype=np.float16), np.array(y, dtype=np.float16) 
 
 
 def normalize(df):
