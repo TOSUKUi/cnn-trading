@@ -247,14 +247,12 @@ class KerasLinear1DSoftMax(CNNModel):
 
     def linear(self):
         inputs = Input(shape=(60, 5), name='inputs')
-        x = Conv1D(filters=30, kernel_size=5, strides=2, activation='relu')(inputs)
-        x = MaxPool1D(pool_size=3, strides=1)(x)
-        x = BatchNormalization()(x)
+        x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(inputs)
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
+        x = MaxPool1D(pool_size=2, strides=1)(x)
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
-        x = MaxPool1D(pool_size=3, strides=2)(x)
-        x = Dropout(rate=0.25)(x)
         x = Flatten(name='flattened')(x)
+        x = Dropout(rate=0.25)(x)
         x = Dense(units=100, activation=tf.nn.relu)(x)
         x = Dense(units=100)(x)
         handling = Dense(units=1, name='output', activation='sigmoid')(x)
