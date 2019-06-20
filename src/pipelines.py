@@ -1,6 +1,7 @@
 from read_data import ReadData
 from pipeline import PipeLine 
-from preprocessing import PreprocessingProcedure1D, TrainingPreprocessingProcedure1D, TrainingPreprocessingProcedure1DBinary
+from preprocessing import PreprocessingProcedure1D, TrainingPreprocessingProcedure1D, TrainingPreprocessingProcedure1DBinary, GramMatrixPreprocessing
+
 from strategies.training import TrainProcedureChainer, TrainProcedureKeras
 from strategies.neural_net import KerasLinear1D, KerasLinear1DSoftMax
 from strategies.predicate import PredicateProcedureKeras
@@ -23,6 +24,18 @@ def train_pipeline():
         )
     ).execute()
 
+def train_pipeline_gram_binary():
+    saved_model_path = "../models/saved_model_gram.h5"
+    data_path = '../data/bitstampUSD_1-min_data_2012-01-01_to_2019-03-13.csv'
+    PipeLine(
+        data_path,
+        ReadData(),
+        GramMatrixPreprocessing(),
+        TrainProcedureKeras
+
+        
+    )
+
 
 def train_pipeline_binary():
     saved_model_path = "../models/saved_model_binary.h5"
@@ -35,7 +48,7 @@ def train_pipeline_binary():
             KerasLinear1DSoftMax(
                 saved_model_path=saved_model_path,
             ),
-            use_early_stop=False
+            use_early_stop=False,
         )
     ).execute()
 

@@ -89,7 +89,6 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
         return self.preprocessing(x, ohlc_dict)
 
     def preprocessing(self, df, how):
-        win = 60
 
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
@@ -98,10 +97,9 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
         
         df_b_a = df_accept.bfill()
         df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
-        array = df_resampled_1min.values 
+        array = df_resampled_15min.values 
         X, y = dataset(array)
-        return np.array(X), np.array(y)
-
+        return np.array(X), np.array(y) 
     
 @njit
 def dataset(array):
@@ -117,5 +115,36 @@ def dataset(array):
     return X, y
 
 
-def normalize(df):
-    return ( df - df.mean() ) / df.std()
+class GramMatrixPreprocessing(Procedure):
+
+    def run(self, x):
+        return self.preprocessing(x)
+    
+    def preprocessing(self, df):
+        return dataset(df.values)
+
+
+@njit
+def dataset_gram_matrix(array):
+    X = []
+    y = []
+    for n in range(40, len(array)-1, 40):
+        matrix_list = []
+        base = array[n-40:n, :]
+        base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
+        for i in range(len(base_normalize)):
+            matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
+        matrixes = np.concatenate(matrix_list)
+        X.append(matrixes)
+        y.append(1 if array[n+1] - array[n] > 0 else 0)
+    return X, y
+        
+
+
+
+        
+
+
+
+
+

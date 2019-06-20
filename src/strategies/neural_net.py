@@ -14,7 +14,7 @@ import numpy as np
 
 
 
-class CNNModel:
+class CNNModel(Procedure):
 
     def train(self, X, y, saved_model_path, batch_size=16, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
         """
@@ -234,9 +234,9 @@ class KerasLinear1DSoftMax(CNNModel):
         if model:
             self.model = model
         elif num_outputs is not None:
-            self.model = self.linear()
+            self.model = self.softmax()
         else:
-            self.model = self.linear()
+            self.model = self.softmax()
 
     def run(self, img_arr):
         output = self.model.predict(img_arr)
@@ -245,7 +245,7 @@ class KerasLinear1DSoftMax(CNNModel):
     def train(self, X, y, *args, **kwargs):
         return super().train(X, y, self.saved_model_path, *args, **kwargs)
 
-    def linear(self):
+    def softmax(self):
         inputs = Input(shape=(60, 5), name='inputs')
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(inputs)
         x = Conv1D(filters=6, kernel_size=3, strides=1, activation='relu')(x)
@@ -259,3 +259,20 @@ class KerasLinear1DSoftMax(CNNModel):
         model = Model(inputs=[inputs], outputs=[handling])
         model.compile(optimizer='adam', loss={'output': 'binary_crossentropy'}, metrics=['accuracy'])
         return model
+
+        
+class ImageConvVGG16(CNNModel):
+
+    def __init__(self,model=None):
+        self.saved_model_path = saved_model_path
+        if model:
+            self.model = model
+        else:
+            self.model = self.image_net()
+
+
+    def image_net(self):
+        input_shape = (40, 40)
+        
+
+        
