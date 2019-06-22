@@ -13,7 +13,6 @@ COPY kaggle.json /root/.kaggle/
 RUN kaggle datasets download -d mczielinski/bitcoin-historical-data -p /home/cnn-trading/data
 
 WORKDIR /home/cnn-trading/data
-RUN unzip bitcoin-histrical-data.zip 
 
 CMD ["/bin/bash"]
 
