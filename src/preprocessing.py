@@ -122,9 +122,7 @@ class GramMatrixPreprocessing(Procedure):
     def preprocessing(self, df):
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
-
         df_accept = df_d.loc[datetime(2013, 8, 1):]
-        
         df_b_a = df_accept.bfill()
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
         df_resampled_15min = df_b_a_ocv
@@ -140,21 +138,11 @@ def dataset_gram_matrix(array):
     y = []
     for n in range(300, len(array)-1, 30):
         matrix_list = []
-        base = array[n-40:n, :]
+        base = array[n-300:n, :]
         base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
         for i in range(3):
             matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
         matrixes = np.concatenate(matrix_list)
         X.append(matrixes)
-        y.append(1 if array[n+1] - array[n] > 0 else 0)
+        y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
     return X, y
-        
-
-
-
-        
-
-
-
-
-
