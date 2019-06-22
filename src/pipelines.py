@@ -40,8 +40,7 @@ def train_pipeline_gram_binary():
         ReadData(),
         GramMatrixPreprocessing(),
         TrainProcedureKeras(
-            ImageConvVGG16(),
-            use_early_stop=True,
+            ImageConvVGG16()
         )
     ).execute()
 
