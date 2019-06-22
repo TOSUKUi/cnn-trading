@@ -9,9 +9,9 @@ class TrainProcedureKeras(Procedure):
         self.model = model
         self.kwargs = kwargs
     
-    def run(self, *data):
-        return self.train_model(*data)
+    def run(self, data):
+        return self.train_model(data)
 
-    def train_model(self, *data):
+    def train_model(self, data):
         return self.model.train(*data, **self.kwargs)
     
