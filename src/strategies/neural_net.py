@@ -1,11 +1,9 @@
-import chainer
-import chainer.functions as F
-import chainer.links as L
 from pipeline import Procedure
 from tensorflow.python.keras import Input
-from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, BatchNormalization, Dropout
+from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, BatchNormalization, Dropout, GlobalAveragePooling2D
 from tensorflow.python.keras.layers import Conv1D, MaxPool1D 
 from tensorflow.python.keras.layers.advanced_activations import LeakyReLU
+from tensorflow.python.keras.applications.inception_v3 import InceptionV3
 from tensorflow.python.keras.models import Model, Sequential
 from tensorflow.python.keras.utils import plot_model, to_categorical
 from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -53,13 +51,6 @@ class CNNModel(Procedure):
         return hist
 
 
-class ModelProcedureChainer(chainer.Chain, Procedure):
-
-    
-    def run(self, x):
-        return self.__call__(x)
-
-
 class ModelProcedureKeras():
 
     def train(self, X, y, saved_model_path, batch_size=8, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
@@ -100,58 +91,6 @@ class ModelProcedureKeras():
 
     def run(self, x):
         return self.model.predict(x)
-
-
-class TradingModel2D(ModelProcedureChainer):
-
-    def __init__(self):
-        super(TradingModel2D, self).__init__()
-        with self.init_scope():
-            self.conv1 = L.Convolution2D(None, 64, ksize=4, stride=4)
-            # self.normalize1 = L.BatchNormalization(None)
-            self.conv2 = L.Convolution2D(64, 512, ksize=4, stride=4)
-            self.conv3 = L.Convolution2D(512, 1920, 4, 4)
-            self.linear1 = L.Linear(128, 128)
-            self.linear2 = L.Linear(128, 128)
-            self.linear3 = L.Linear(128, 1)
-        
-    def __call__(self, x):
-        h1 = self.conv1(x)
-        # h2 = self.normalize1(h1)
-        h3 = F.relu(h1)
-        h4 = F.max_pooling_2d(h3, 4, 2)
-        h5 = F.max_pooling_2d(F.relu(self.conv2(h4)), 4, 2)
-        h6 = F.max_pooling_2d(F.relu(self.conv3(h5)), 4, 2)
-        l1 = F.sigmoid(self.linear1(h6))
-        l2 = F.sigmoid(self.linear2(l1))
-        return self.linear3(l2)
-
-
-class TradingModel1D(ModelProcedureChainer):
-
-    def __init__(self):
-        super(TradingModel1D, self).__init__()
-        with self.init_scope():
-            self.conv1 = L.Convolution1D(None, 64, ksize=4, stride=4)
-            self.conv2 = L.Convolution1D(None, 512, ksize=4, stride=4)
-            self.conv3 = L.Convolution1D(None, 1920, 4, 4)
-            self.linear1 = L.Linear(None, 1280)
-            self.linear2 = L.Linear(1280, 1280)
-            self.linear3 = L.Linear(1280, 1)
-        
-    def __call__(self, x):
-        h1 = self.conv1(x)
-        # h2 = self.normalize1(h1)
-        h3 = F.relu(h1)
-        h4 = F.max_pooling_2d(h3, 4, 2)
-        h5 = F.max_pooling_2d(F.relu(self.conv2(h4)), 4, 2)
-        h6 = F.max_pooling_2d(F.relu(self.conv3(h5)), 4, 2)
-        l1 = F.relu(self.linear1(h6))
-        l2 = F.relu(self.linear2(l1))
-        return self.linear3(l2)
-
-    def run(self, x):
-        return self.__call__(x)
 
 
 class KerasLinear(CNNModel):
@@ -263,16 +202,22 @@ class KerasLinear1DSoftMax(CNNModel):
         
 class ImageConvVGG16(CNNModel):
 
-    def __init__(self,model=None):
-        self.saved_model_path = saved_model_path
+    def __init__(self, model=None):
         if model:
             self.model = model
         else:
             self.model = self.image_net()
 
+    def run(self, img_arr):
+        output = self.model.predict(img_arr)
+        return np.argmax(output[0])
 
     def image_net(self):
-        input_shape = (40, 40)
-        
-
-        
+        input_shape = (300, 300, 3)
+        base_model = InceptionV3(weights='imagenet', include_top=False)
+        x = base_model.output
+        x = GlobalAveragePooling2D()(x)
+        x = Dense(512, avtivation='relu')(x)
+        predictions = Dense(2, activation='softmax')(x)
+        model = Model(inputs = base_model.input, outputs=predictions)
+        model.compile(optimizer='adam', loss='categorical_crossentropy')

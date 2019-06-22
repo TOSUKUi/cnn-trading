@@ -2,7 +2,6 @@ import pandas as pd
 from pipeline import Procedure
 from datetime import datetime
 import numpy as np
-from chainer.datasets import TupleDataset
 from tqdm import tqdm
 from numba import njit, jit
 as_strided = np.lib.stride_tricks.as_strided  
@@ -121,18 +120,29 @@ class GramMatrixPreprocessing(Procedure):
         return self.preprocessing(x)
     
     def preprocessing(self, df):
-        return dataset(df.values)
+        df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
+        df_d = df.set_index("datetime")
+
+        df_accept = df_d.loc[datetime(2013, 8, 1):]
+        
+        df_b_a = df_accept.bfill()
+        df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
+        df_resampled_15min = df_b_a_ocv
+        array = df_resampled_15min.values 
+        list_X, list_y = dataset_gram_matrix(array)
+        X, y = np.array(list_X), np.array(list_y)
+        print(X.shape)
 
 
-@njit
+@jit
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(40, len(array)-1, 40):
+    for n in range(300, len(array)-1, 30):
         matrix_list = []
         base = array[n-40:n, :]
         base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
-        for i in range(len(base_normalize)):
+        for i in range(3):
             matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
         matrixes = np.concatenate(matrix_list)
         X.append(matrixes)
