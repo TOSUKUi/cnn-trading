@@ -220,5 +220,5 @@ class ImageConvVGG16(CNNModel):
         x = Dense(512, activation='relu')(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = base_model.input, outputs=predictions)
-        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
+        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         return model
