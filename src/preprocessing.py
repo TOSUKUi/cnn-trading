@@ -129,14 +129,15 @@ class GramMatrixPreprocessing(Procedure):
         array = df_resampled_15min.values 
         list_X, list_y = dataset_gram_matrix(array)
         X, y = np.array(list_X), np.array(list_y)
-        print(X.shape)
+        X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
+        return X_reshape, y
 
 
 @jit
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(250, 16000, 250):
+    for n in range(250, 50000, 250):
         matrix_list = []
         base = array[n-250:n, :]
         base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
