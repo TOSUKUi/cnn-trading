@@ -8,9 +8,9 @@ WORKDIR /tmp
 
 RUN pip3 install -r reuqirements.txt
 
-WORKDIR /home/cnn-trading
+WORKDIR /home/cnn-trading/src
 
-CMD ["/bin/bash"]
+CMD ["python3", "-c", "'from pipelines import *; train_pipeline_gram_binary()'"]
 
 
 
