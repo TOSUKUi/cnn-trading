@@ -217,7 +217,7 @@ class ImageConvVGG16(CNNModel):
         base_model = InceptionV3(weights='imagenet', include_top=False)
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
-        x = Dense(512, avtivation='relu')(x)
+        x = Dense(512, activation='relu')(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = base_model.input, outputs=predictions)
         model.compile(optimizer='adam', loss='categorical_crossentropy')
