@@ -136,7 +136,7 @@ class GramMatrixPreprocessing(Procedure):
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(300, len(array)-1, 30):
+    for n in range(300, len(array)-1, 300):
         matrix_list = []
         base = array[n-300:n, :]
         base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
