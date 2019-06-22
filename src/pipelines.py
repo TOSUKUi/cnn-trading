@@ -7,6 +7,7 @@ from preprocessing import PreprocessingProcedure1D, TrainingPreprocessingProcedu
 from strategies.neural_net import KerasLinear1D, KerasLinear1DSoftMax, ImageConvVGG16
 from strategies.predicate import PredicateProcedureKeras
 import tensorflow as tf
+from tensorflow.python.keras import backend as K
 config = tf.ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 0.4
 sess = tf.Session(config=config)
