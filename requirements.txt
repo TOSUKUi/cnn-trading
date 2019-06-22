@@ -1,0 +1,5 @@
+tensorflow-gpu==1.13.1
+scikit-learn
+pandas
+tqdm 
+numba

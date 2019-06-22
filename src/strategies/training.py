@@ -1,6 +1,5 @@
 import argparse
 from pipeline import  Procedure
-from sklearn.model_selection import train_test_split
 
 
 
