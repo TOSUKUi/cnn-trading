@@ -6,7 +6,7 @@ RUN apt update && apt install -y python3 \
 COPY requirements.txt /tmp/
 WORKDIR /tmp
 
-RUN pip3 install -r reuqirements.txt
+RUN pip3 install -r requirements.txt
 
 WORKDIR /home/cnn-trading/src
 
