@@ -136,13 +136,13 @@ class GramMatrixPreprocessing(Procedure):
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(300, len(array)-1, 300):
+    for n in range(250, len(array)-1, 250):
         matrix_list = []
-        base = array[n-300:n, :]
+        base = array[n-250:n, :]
         base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
         for i in range(3):
             matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
         matrixes = np.concatenate(matrix_list)
-        X.append(matrixes)
+        X.append(matrixes.astype(np.float16))
         y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
     return X, y

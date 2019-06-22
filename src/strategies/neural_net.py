@@ -213,7 +213,7 @@ class ImageConvVGG16(CNNModel):
         return np.argmax(output[0])
 
     def image_net(self):
-        input_shape = (300, 300, 3)
+        input_shape = (250, 250, 3)
         base_model = InceptionV3(weights='imagenet', include_top=False)
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
