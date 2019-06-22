@@ -221,3 +221,4 @@ class ImageConvVGG16(CNNModel):
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = base_model.input, outputs=predictions)
         model.compile(optimizer='adam', loss='categorical_crossentropy')
+        return model
