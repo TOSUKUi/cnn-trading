@@ -155,7 +155,7 @@ def dataset_gram_matrix(array, binary=True):
             matrix_list.append(np.multiply(base_normalize, base_normalize.T))
         matrixes = np.array(matrix_list)
         X.append(matrixes)
-        y.append( ( array[n+1, 1] - array[n, 1] )/ array[n, 1])
+        y.append( array[n+1, 1] - array[n, 1] )
     return np.array(X), np.array(y)
 
 
@@ -181,4 +181,4 @@ class GramMatrixPreprocessingRegression(Procedure):
         array = df_resampled_15min.values.astype(np.float32) 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.transpose(X, [0, 2, 3, 1])
-        return X_reshape, np.log(y)
+        return X_reshape, y
