@@ -228,11 +228,17 @@ class ImageConvVGG16(CNNModel):
         x = Dropout(rate=0.25)(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = inputs, outputs=predictions)
-        # TPU
-        tpu_grpc_url = "grpc://"+os.environ["COLAB_TPU_ADDR"]
-        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(tpu_grpc_url)
-        strategy = keras_support.TPUDistributionStrategy(tpu_cluster_resolver)
-        model = tf.contrib.tpu.keras_to_tpu_model(model, strategy=strategy)
+        # 環境変数に登録されているTPUサーバーへ接続
+        TPU_WORKER = "grpc://" + os.environ["COLAB_TPU_ADDR"]
+        strategy = tf.contrib.tpu.TPUDistributionStrategy(
+            tf.contrib.cluster_resolver.TPUClusterResolver(TPU_WORKER)
+        )
+
+        # Keras ModelをTPU形式へ変換
+        tpu_model = tf.contrib.tpu.keras_to_tpu_model(
+            model,
+            strategy=strategy
+        )
 
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
