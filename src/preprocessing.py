@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 from tqdm import tqdm
 from numba import njit, jit
+from tensorflow.python.keras.utils import to_categorical
 as_strided = np.lib.stride_tricks.as_strided  
 
 
@@ -129,6 +130,7 @@ class GramMatrixPreprocessing(Procedure):
         array = df_resampled_15min.values.astype(np.float16) 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
+        y_categorical = to_categorical(y)
         return X_reshape, y
 
 
