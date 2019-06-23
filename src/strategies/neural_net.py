@@ -214,11 +214,17 @@ class ImageConvVGG16(CNNModel):
 
     def image_net(self):
         input_shape = (250, 250, 3)
-        base_model = InceptionV3(weights='imagenet', include_top=False)
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
+        inputs = Input(shape=input_shape)
+        x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(inputs)
+        x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(x)
+        x = MaxPool2D(pool_size=2, strides=1)(x)
+        x = BatchNormalization()(x)
+        x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
+        x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
+        x = MaxPool2D(pool_size=2, strides=2)(x)
+        x = Flatten(name='flattened')(x)
         x = Dense(512, activation='relu')(x)
         predictions = Dense(2, activation='softmax')(x)
-        model = Model(inputs = base_model.input, outputs=predictions)
+        model = Model(inputs = inputs, outputs=predictions)
         model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         return model
