@@ -207,11 +207,7 @@ class ImageConvVGG16(CNNModel):
         if model:
             self.model = model
         else:
-            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
-            tf.contrib.distribute.initialize_tpu_system(resolver)
-            strategy = tf.contrib.distribute.TPUStrategy(resolver)
-            with strategy.scope():
-                self.model = self.image_net()
+            self.model = self.image_net()
 
     def run(self, img_arr):
         output = self.model.predict(img_arr)
