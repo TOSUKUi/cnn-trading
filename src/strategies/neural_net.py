@@ -254,7 +254,7 @@ class ImageConv2DRegressionAfterBin(CNNModel):
         x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
         x = MaxPool2D(pool_size=2, strides=2)(x)
         x = Flatten(name='flattened')(x)
-        x = Dense(512, activation='relu')(x)
+        x = Dense(512, activation='tanh')(x)
         x = Dropout(rate=0.25)(x)
         predictions = Dense(1, activation='linear')(x)
         model = Model(inputs = inputs, outputs=predictions)
