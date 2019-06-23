@@ -123,9 +123,13 @@ class GramMatrixPreprocessing(Procedure):
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
         df_accept = df_d.loc[datetime(2013, 8, 1):]
+        del df_d
         df_b_a = df_accept.bfill()
+        del df_accept
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
+        del df_b_a
         df_resampled_15min = df_b_a_ocv
+        del df_b_a_ocv
         array = df_resampled_15min.values 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
