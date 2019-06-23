@@ -146,7 +146,7 @@ class GramMatrixPreprocessing(Procedure):
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(250, len(array)-1, 50):
+    for n in range(250, len(array)-1, 25):
         matrix_list = []
         base = array[n - 250:n, :]
         for i in range(3):
