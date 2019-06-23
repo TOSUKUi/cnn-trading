@@ -256,7 +256,7 @@ class ImageConv2DRegressionAfterBin(CNNModel):
         x = Flatten(name='flattened')(x)
         x = Dense(512, activation='relu')(x)
         x = Dropout(rate=0.25)(x)
-        predictions = Dense(1, activation='liner')(x)
+        predictions = Dense(1, activation='linear')(x)
         model = Model(inputs = inputs, outputs=predictions)
         model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
         return model
