@@ -215,7 +215,7 @@ class ImageConvVGG16(CNNModel):
 
     def image_net(self):
         input_shape = (250, 250, 3)
-        base_model = InceptionV3(weights='imagenet', include_top=False)
+        base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dense(512, activation='relu')(x)
