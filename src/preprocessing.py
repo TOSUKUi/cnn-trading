@@ -120,7 +120,6 @@ class GramMatrixPreprocessing(Procedure):
     def run(self, x):
         return self.preprocessing(x)
     
-
     def preprocessing(self, df):
         how = {
             'Open': 'first',
@@ -139,7 +138,8 @@ class GramMatrixPreprocessing(Procedure):
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
         y_categorical = to_categorical(y)
-        return X_reshape, y_categorical
+        print(y_categorical)
+        return X_reshape, y_categorical.astype(np.uint8)
 
 
 @jit
@@ -156,5 +156,5 @@ def dataset_gram_matrix(array):
         matrixes = np.array(matrix_list)
         X.append(matrixes)
         y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
-    return np.array(X), np.array(y)
+    return np.array(X), np.array(y).astype(np.uint8)
 
