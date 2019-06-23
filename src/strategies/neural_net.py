@@ -220,5 +220,11 @@ class ImageConvVGG16(CNNModel):
         x = Dense(512, activation='relu')(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = base_model.input, outputs=predictions)
-        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
+
+        # TPU
+        tpu_grpc_url = "grpc://"+os.environ["COLAB_TPU_ADDR"]
+        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(tpu_grpc_url)
+        strategy = tf.contrib.tpu.TPUDistributionStrategy(tpu_cluster_resolver)
+        model = tf.contrib.tpu.keras_to_tpu_model(model, strategy=strategy)
         return model
