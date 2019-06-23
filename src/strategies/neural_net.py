@@ -228,6 +228,7 @@ class ImageConvVGG16(CNNModel):
         x = Dropout(rate=0.25)(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = inputs, outputs=predictions)
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         # 環境変数に登録されているTPUサーバーへ接続
         TPU_WORKER = "grpc://" + os.environ["COLAB_TPU_ADDR"]
         strategy = tf.contrib.tpu.TPUDistributionStrategy(
@@ -240,5 +241,4 @@ class ImageConvVGG16(CNNModel):
             strategy=strategy
         )
 
-        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
