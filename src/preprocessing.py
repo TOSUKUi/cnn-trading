@@ -131,7 +131,7 @@ class GramMatrixPreprocessing(Procedure):
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
         y_categorical = to_categorical(y)
-        return X_reshape, y
+        return X_reshape, y_categorical
 
 
 @jit
