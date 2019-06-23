@@ -127,8 +127,7 @@ class GramMatrixPreprocessing(Procedure):
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
         df_resampled_15min = df_b_a_ocv
         array = df_resampled_15min.values 
-        list_X, list_y = dataset_gram_matrix(array)
-        X, y = np.array(list_X), np.array(list_y)
+        X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
         return X_reshape, y
 
@@ -146,4 +145,4 @@ def dataset_gram_matrix(array):
         matrixes = np.array(matrix_list)
         X.append(matrixes.astype(np.float16))
         y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
-    return X, y
+    return np.array(X), np.array(y)
