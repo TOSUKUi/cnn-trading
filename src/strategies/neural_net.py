@@ -219,7 +219,6 @@ class ImageConvVGG16(CNNModel):
         x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(inputs)
         x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(x)
         x = MaxPool2D(pool_size=2, strides=1)(x)
-        x = BatchNormalization()(x)
         x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
         x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
         x = MaxPool2D(pool_size=2, strides=2)(x)
