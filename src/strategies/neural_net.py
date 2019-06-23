@@ -207,25 +207,27 @@ class ImageConvVGG16(CNNModel):
         if model:
             self.model = model
         else:
-            self.model = self.image_net()
+            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
+            tf.contrib.distribute.initialize_tpu_system(resolver)
+            strategy = tf.contrib.distribute.TPUStrategy(resolver)
+            with strategy.scope():
+                self.model = self.image_net()
 
     def run(self, img_arr):
         output = self.model.predict(img_arr)
         return np.argmax(output[0])
 
     def image_net(self):
-        input_shape = (250, 250, 3)
-        base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(512, activation='relu')(x)
-        predictions = Dense(2, activation='softmax')(x)
-        model = Model(inputs = base_model.input, outputs=predictions)
-        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
-
-        # TPU
-        tpu_grpc_url = "grpc://"+os.environ["COLAB_TPU_ADDR"]
-        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(tpu_grpc_url)
-        strategy = tf.contrib.tpu.TPUDistributionStrategy(tpu_cluster_resolver)
-        model = tf.contrib.tpu.keras_to_tpu_model(model, strategy=strategy)
+        resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
+        tf.contrib.distribute.initialize_tpu_system(resolver)
+        strategy = tf.contrib.distribute.TPUStrategy(resolver)
+        with strategy.scope():
+            input_shape = (250, 250, 3)
+            base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
+            x = base_model.output
+            x = GlobalAveragePooling2D()(x)
+            x = Dense(512, activation='relu')(x)
+            predictions = Dense(2, activation='softmax')(x)
+            model = Model(inputs = base_model.input, outputs=predictions)
+            model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
         return model
