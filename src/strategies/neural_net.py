@@ -224,6 +224,7 @@ class ImageConvVGG16(CNNModel):
         x = MaxPool2D(pool_size=2, strides=2)(x)
         x = Flatten(name='flattened')(x)
         x = Dense(512, activation='relu')(x)
+        x = Dropout(rate=0.25)(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = inputs, outputs=predictions)
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
