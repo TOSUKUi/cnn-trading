@@ -10,6 +10,7 @@ from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 import numpy as np
 
+import os
 
 
 class CNNModel(Procedure):
