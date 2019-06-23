@@ -123,14 +123,10 @@ class GramMatrixPreprocessing(Procedure):
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
         df_accept = df_d.loc[datetime(2013, 8, 1):]
-        del df_d
         df_b_a = df_accept.bfill()
-        del df_accept
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
-        del df_b_a
         df_resampled_15min = df_b_a_ocv
-        del df_b_a_ocv
-        array = df_resampled_15min.values 
+        array = df_resampled_15min.values.astype(np.float16) 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
         return X_reshape, y
@@ -147,6 +143,6 @@ def dataset_gram_matrix(array):
         for i in range(3):
             matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
         matrixes = np.array(matrix_list)
-        X.append(matrixes.astype(np.float16))
+        X.append(matrixes)
         y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
     return np.array(X), np.array(y)
