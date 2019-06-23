@@ -156,7 +156,11 @@ def dataset_gram_matrix(array, binary=True):
         matrixes = np.array(matrix_list)
         X.append(matrixes)
         y.append( array[n+1, 1] - array[n, 1] )
-    return np.array(X), np.array(y)
+    y_np = np.array(y)
+    if binary:
+        y_np[y_np > 0] = 1
+        y_np[y_np <= 0] = 0
+    return np.array(X), y_np
 
 
 class GramMatrixPreprocessingRegression(Procedure):
@@ -179,7 +183,7 @@ class GramMatrixPreprocessingRegression(Procedure):
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
         df_resampled_15min = df_b_a_ocv.resample('15min', how=how)
         array = df_resampled_15min.values.astype(np.float32) 
-        X, y = dataset_gram_matrix(array)
+        X, y = dataset_gram_matrix(array, binary=False)
         X_reshape = np.transpose(X, [0, 2, 3, 1])
         nan = np.isnan(y)
         X_reshape = X_reshape[~nan]
