@@ -120,14 +120,22 @@ class GramMatrixPreprocessing(Procedure):
     def run(self, x):
         return self.preprocessing(x)
     
+
     def preprocessing(self, df):
+        how = {
+            'Open': 'first',
+            'High': 'max',
+            'Low': 'min',
+            'Close': 'last',
+            'Volume_(Currency)': 'sum'
+        }
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
         df_accept = df_d.loc[datetime(2017, 8, 1):]
         df_b_a = df_accept.bfill()
         df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
-        df_resampled_15min = df_b_a_ocv
-        array = df_resampled_15min.values.astype(np.float16) 
+        df_resampled_15min = df_b_a_ocv.resample('15min', how=how)
+        array = df_resampled_15min.values.astype(np.float32) 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.reshape(X, (X.shape[0], X.shape[2], X.shape[3], X.shape[1]))
         y_categorical = to_categorical(y)
@@ -138,13 +146,15 @@ class GramMatrixPreprocessing(Procedure):
 def dataset_gram_matrix(array):
     X = []
     y = []
-    for n in range(250, len(array) - 1, 250):
+    for n in range(250, len(array)-1, 250):
         matrix_list = []
-        base = array[n-250:n, :]
-        base_normalize = ((base - base.max()) - (base - base.min())) / (base.max() - base.min()) 
+        base = array[n - 250:n, :]
         for i in range(3):
-            matrix_list.append(np.multiply(base_normalize[:, [i]], base_normalize[:, [i]].T))
+            base_col = base[:, [i]]
+            base_normalize = ((base_col - base_col.min()) / (base_col.max() - base_col.min())).astype(np.float16)
+            matrix_list.append(np.multiply(base_normalize, base_normalize.T))
         matrixes = np.array(matrix_list)
         X.append(matrixes)
         y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
     return np.array(X), np.array(y)
+
