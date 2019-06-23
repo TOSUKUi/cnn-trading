@@ -15,7 +15,7 @@ import os
 
 class CNNModel(Procedure):
 
-    def train(self, X, y, saved_model_path, batch_size=16, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
+    def train(self, X, y, saved_model_path, batch_size=2048, epochs=100,  train_split=0.8, verbose=1, min_delta=.0005, patience=5, use_early_stop=True):
         """
         Args:
             train: list of traininig data
@@ -218,16 +218,18 @@ class ImageConvVGG16(CNNModel):
         return np.argmax(output[0])
 
     def image_net(self):
-        resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
-        tf.contrib.distribute.initialize_tpu_system(resolver)
-        strategy = tf.contrib.distribute.TPUStrategy(resolver)
-        with strategy.scope():
-            input_shape = (250, 250, 3)
-            base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
-            x = base_model.output
-            x = GlobalAveragePooling2D()(x)
-            x = Dense(512, activation='relu')(x)
-            predictions = Dense(2, activation='softmax')(x)
-            model = Model(inputs = base_model.input, outputs=predictions)
-            model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
+        input_shape = (250, 250, 3)
+        base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
+        x = base_model.output
+        x = GlobalAveragePooling2D()(x)
+        x = Dense(512, activation='relu')(x)
+        predictions = Dense(2, activation='softmax')(x)
+        model = Model(inputs = base_model.input, outputs=predictions)
+        tpu_model = tf.contrib.tpu.keras_to_tpu_model(
+            model,
+            strategy=tf.contrib.tpu.TPUDistributionStrategy(
+                tf.contrib.cluster_resolver.TPUClusterResolver(tpu='grpc://' + os.environ['COLAB_TPU_ADDR'])
+            )
+        )
+        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
         return model
