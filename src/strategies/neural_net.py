@@ -229,3 +229,34 @@ class ImageConvVGG16(CNNModel):
         model = Model(inputs = inputs, outputs=predictions)
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
+
+
+class ImageConv2DRegressionAfterBin(CNNModel):
+
+    def __init__(self, model=None):
+        if model:
+            self.model = model
+        else:
+            self.model = self.image_net()
+
+    def run(self, img_arr):
+        output = self.model.predict(img_arr)
+        return output
+
+    def image_net(self):
+        input_shape = (250, 250, 3)
+        inputs = Input(shape=input_shape)
+        x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(inputs)
+        x = Conv2D(filters=32, kernel_size=3, strides=1, padding='same', activation='relu')(x)
+        x = MaxPool2D(pool_size=2, strides=1)(x)
+        x = BatchNormalization()(x)
+        x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
+        x = Conv2D(filters=24, kernel_size=3, strides=2, activation='relu', padding='same')(x)
+        x = MaxPool2D(pool_size=2, strides=2)(x)
+        x = Flatten(name='flattened')(x)
+        x = Dense(512, activation='relu')(x)
+        x = Dropout(rate=0.25)(x)
+        predictions = Dense(1, activation='liner')(x)
+        model = Model(inputs = inputs, outputs=predictions)
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        return model

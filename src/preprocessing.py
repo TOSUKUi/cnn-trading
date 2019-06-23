@@ -143,7 +143,7 @@ class GramMatrixPreprocessing(Procedure):
 
 
 @jit
-def dataset_gram_matrix(array):
+def dataset_gram_matrix(array, binary=True):
     X = []
     y = []
     for n in range(250, len(array)-1, 25):
@@ -155,6 +155,30 @@ def dataset_gram_matrix(array):
             matrix_list.append(np.multiply(base_normalize, base_normalize.T))
         matrixes = np.array(matrix_list)
         X.append(matrixes)
-        y.append(1 if array[n+1, 1] - array[n, 1] > 0 else 0)
-    return np.array(X), np.array(y).astype(np.uint8)
+        y.append( ( array[n+1, 1] - array[n, 1] )/ array[n, 1])
+    return np.array(X), np.array(y)
 
+
+class GramMatrixPreprocessingRegression(Procedure):
+
+    def run(self, x):
+        return self.preprocessing(x)
+    
+    def preprocessing(self, df):
+        how = {
+            'Open': 'first',
+            'High': 'max',
+            'Low': 'min',
+            'Close': 'last',
+            'Volume_(Currency)': 'sum'
+        }
+        df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
+        df_d = df.set_index("datetime")
+        df_accept = df_d.loc[datetime(2014, 8, 1):]
+        df_b_a = df_accept.bfill()
+        df_b_a_ocv = df_b_a[["Open", "Close", "Volume_(Currency)"]]
+        df_resampled_15min = df_b_a_ocv.resample('15min', how=how)
+        array = df_resampled_15min.values.astype(np.float32) 
+        X, y = dataset_gram_matrix(array)
+        X_reshape = np.transpose(X, [0, 2, 3, 1])
+        return X_reshape, y
