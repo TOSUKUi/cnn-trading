@@ -181,4 +181,4 @@ class GramMatrixPreprocessingRegression(Procedure):
         array = df_resampled_15min.values.astype(np.float32) 
         X, y = dataset_gram_matrix(array)
         X_reshape = np.transpose(X, [0, 2, 3, 1])
-        return X_reshape, y
+        return X_reshape, np.log(y)
