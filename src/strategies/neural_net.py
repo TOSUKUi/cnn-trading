@@ -9,6 +9,7 @@ from tensorflow.python.keras.utils import plot_model, to_categorical
 from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 import numpy as np
+import os
 
 
 
@@ -227,5 +228,11 @@ class ImageConvVGG16(CNNModel):
         x = Dropout(rate=0.25)(x)
         predictions = Dense(2, activation='softmax')(x)
         model = Model(inputs = inputs, outputs=predictions)
+        # TPU
+        tpu_grpc_url = "grpc://"+os.environ["COLAB_TPU_ADDR"]
+        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(tpu_grpc_url)
+        strategy = keras_support.TPUDistributionStrategy(tpu_cluster_resolver)
+        model = tf.contrib.tpu.keras_to_tpu_model(model, strategy=strategy)
+
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
