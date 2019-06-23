@@ -156,6 +156,7 @@ def dataset_gram_matrix(array, binary=True):
         matrixes = np.array(matrix_list)
         X.append(matrixes)
         y.append( array[n+1, 1] - array[n, 1] )
+        print(y)
     return np.array(X), np.array(y)
 
 
