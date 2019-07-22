@@ -96,7 +96,7 @@ class TrainingPreprocessingProcedure1DBinary(Procedure):
         df_accept = df_d.loc[datetime(2013, 8, 1):]
         
         df_b_a = df_accept.bfill()
-        df_resampled_1min = df_b_a[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
+        df_resampled_1min = df_b_a[["open", "high", "low", "close", "volume_(currency)"]]
         array = df_resampled_15min.values 
         X, y = dataset(array)
         return np.array(X), np.array(y) 
@@ -167,14 +167,13 @@ class GramMatrixPreprocessingRegression(Procedure):
 
     def run(self, x):
         return self.preprocessing(x)
-    
+
     def preprocessing(self, df):
         how = {
             'Open': 'first',
             'High': 'max',
             'Low': 'min',
-            'Close': 'last',
-            'Volume_(Currency)': 'sum'
+            'Close': 'last', 'Volume_(Currency)': 'sum'
         }
         df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
         df_d = df.set_index("datetime")
@@ -189,3 +188,24 @@ class GramMatrixPreprocessingRegression(Procedure):
         X_reshape = X_reshape[~nan]
         y = y[~nan]
         return X_reshape, y
+    
+
+class NextLegsPreprocessing(Procedure):
+
+    def run(self, x):
+        return self.preprocessing(x)
+
+    def preprocessing(self, df):
+        how = {
+            'Open': 'first',
+            'High': 'max',
+            'Low': 'min',
+            'Close': 'last',
+            'Volume_(Currency)': 'sum'
+        }
+        df.loc[:, "datetime"] = pd.to_datetime(df['Timestamp'], unit='s')
+        df = df.reset_index("datetime")
+        df = df[datetime(2015, 7, 1):]
+        df = df[["Open", "High", "Low", "Close", "Volume_(Currency)"]]
+        x = df.values 
+        
