@@ -1,6 +1,15 @@
-tensorflow-gpu==1.13.1
-scikit-learn
 pandas
+tensorflow-gpu
+chainer
+numpy
+scipy
+jax
 tqdm 
 numba
+scikit-learn
 kaggle
+torch
+torchvision
+jupyterlab
+jupyterlab-nvdashboard
+ipywidgets

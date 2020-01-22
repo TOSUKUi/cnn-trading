@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 pandas = "*"
-tensorflow-gpu = "==2.0.0a"
+tensorflow-gpu = "==2.0.0"
 chainer = "*"
 numpy = "*"
 scipy = "*"
@@ -16,6 +16,10 @@ tqdm = "*"
 numba = "*"
 scikit-learn = "*"
 kaggle = "*"
+torch = "*"
+torchvision = "*"
+jupyterlab = "*"
+
 
 [requires]
-python_version = "3.6.5"
+python_version = "3.6"
