@@ -13,3 +13,4 @@ torchvision
 jupyterlab
 jupyterlab-nvdashboard
 ipywidgets
+backtrader
