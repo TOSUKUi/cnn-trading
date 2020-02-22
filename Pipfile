@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 pandas = "*"
-tensorflow-gpu = "==2.0.0"
+tensorflow-gpu = ">=2.0.1"
 chainer = "*"
 numpy = "*"
 scipy = "*"
